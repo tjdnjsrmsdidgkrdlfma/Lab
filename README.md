@@ -1,2 +1,2 @@
 # Lab
-Laboratory
+바이러스 격리실
